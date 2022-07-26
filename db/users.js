@@ -1,3 +1,5 @@
+/* eslint-disable no-useless-catch */
+
 const client = require("./client");
 // const bcrypt = require('bcrypt');
 
@@ -5,11 +7,28 @@ const client = require("./client");
 
 // user functions
 async function createUser({ username, password }){
+    try {
+        const { rows: [ user ] } = await client.query(`
+            INSERT INTO users(username, password)
+            VALUES ($1, $2)
+            ON CONFLICT (username) DO NOTHING
+            RETURNING username;
+            
+        `, [username, password]);
+        return user
+    } 
+    catch (error) {
+        throw error;
+    } 
+} 
+
+
+
  
 // const SALT_COUNT = 10;
 
 // const hashedPassword = await bcrypt.hash(password, SALT_COUNT)
-}
+
 
 async function getUser({ username, password }) {
   // const user = await getUserByUserName(username);
