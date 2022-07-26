@@ -8,9 +8,9 @@ async function dropTables() {
   try{
   console.log("Dropping All Tables...")
   await client.query(`
-  DROP TABLE IF EXISTS activities;
-  DROP TABLE IF EXISTS routines;
   DROP TABLE IF EXISTS routine_activities;
+  DROP TABLE IF EXISTS routines;
+  DROP TABLE IF EXISTS activities;
   DROP TABLE IF EXISTS users;
   `)
   console.log("Finsihed droping tables!")
@@ -33,7 +33,7 @@ async function createTables() {
           password VARCHAR(255) NOT NULL
   );
    `);
-
+      console.log('36')
    await client.query(`
     CREATE TABLE activities(
       id SERIAL PRIMARY KEY,
@@ -41,24 +41,28 @@ async function createTables() {
           description TEXT NOT NULL
     );
     `);
-
+console.log("44")
     await client.query(`
     CREATE TABLE routines(
       id SERIAL PRIMARY KEY,
           "creatorId" INTEGER REFERENCES users(id),
-          "isPublic" BOOLEAN DEAFAULT false,
+          "isPublic" BOOLEAN DEFAULT false,
           name varchar(255) UNIQUE NOT NULL,
           goal TEXT NOT NULL
     );
     `);
+    console.log('54')
     await client.query(`
+    CREATE TABLE routine_activities(
       id SERIAL PRIMARY KEY,
-      "routineId" INTEGER REFRENCES UNIQUE routines(id),
-      "activityId" INTEGER REFRENCES UNIQUE activities(id),
+      "routineId" INTEGER REFERENCES routines(id),
+      "activityId" INTEGER REFERENCES activities(id),
       duration INTEGER,
       count INTEGER,
+      UNIQUE ("routineId", "activityId")
+      );
       `)
-
+      console.log('62')
   console.log("Finished building tables!");
     } catch (error) {
       console.error("Error building tables!");
