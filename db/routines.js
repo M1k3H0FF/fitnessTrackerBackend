@@ -37,7 +37,7 @@ async function getRoutineById(id) {
 
 async function getRoutinesWithoutActivities() {
   const { rows } = await client.query(`
-    SELECT name 
+    SELECT * 
     FROM routines;
   `)
 
@@ -46,11 +46,14 @@ async function getRoutinesWithoutActivities() {
 
 async function getAllRoutines() {
   const { rows } = await client.query(`
-  SELECT * 
-  FROM routines;
+  SELECT routines.*, users.username
+  FROM routines
+  JOIN users ON 
+  routines.creatorId = userId
 `)
 // console.log(rows, "here's line 50")
 return rows;
+
 }
 
 async function getAllPublicRoutines() {
