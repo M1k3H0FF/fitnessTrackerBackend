@@ -7,7 +7,7 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
   // eslint-disable-next-line no-useless-catch
   try {
     const { rows: [ routine ] } = await client.query(`
-        INSERT INTO routines(creatorId, isPublic, name, goal)
+        INSERT INTO routines("creatorId", "isPublic", name, goal)
         VALUES ($1, $2, $3, $4)
         ON CONFLICT (name) DO NOTHING
         RETURNING *;

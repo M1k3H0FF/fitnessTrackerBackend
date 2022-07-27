@@ -31,10 +31,22 @@ async function createUser({ username, password }){
 
 
 async function getUser({ username, password }) {
+ try{
+  const { rows: [user] } = await client.query(`
+    SELECT * 
+    FROM users
+    WHERE username=$1
+    `, [username, password]);
+  
+    return user;
+  } catch (error) {
+      throw error;
+    }
+}
+
   // const user = await getUserByUserName(username);
   // const hashedPassword = user.password;
   // const isValid = await bcrypt.compare(password, hashedPassword)
-}
 
 
 async function getUserById(userId) {

@@ -25,7 +25,6 @@ async function getAllActivities() {
     FROM activities;
   `)
   return rows;
-
 }
 
 async function getActivityById(id) {}
