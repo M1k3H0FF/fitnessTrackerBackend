@@ -43,8 +43,8 @@ async function createTables() {
     await client.query(`
     CREATE TABLE routines(
       id SERIAL PRIMARY KEY,
-          "creatorId" INTEGER REFERENCES users(id),
-          "isPublic" BOOLEAN DEFAULT false,
+          "creatorid" INTEGER REFERENCES users(id),
+          "ispublic" BOOLEAN DEFAULT false,
           name varchar(255) UNIQUE NOT NULL,
           goal TEXT NOT NULL
     );
