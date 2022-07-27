@@ -1,6 +1,8 @@
 /* eslint-disable */
 
+const { attachActivitiesToRoutines } = require("./activities");
 const client = require("./client");
+
 
 
 async function createRoutine({ creatorId, isPublic, name, goal }) {
@@ -46,13 +48,13 @@ async function getRoutinesWithoutActivities() {
 
 async function getAllRoutines() {
   const { rows } = await client.query(`
-  SELECT routines.*, users.username
+  SELECT routines.*, users.username AS "creatorName"
   FROM routines
-  JOIN users ON 
-  routines.creatorId = userId
+  JOIN users ON routines."creatorId" = users.id
 `)
-// console.log(rows, "here's line 50")
-return rows;
+return attachActivitiesToRoutines(rows);
+console.log(rows, "here's line 50")
+
 
 }
 
