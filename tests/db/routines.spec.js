@@ -344,7 +344,7 @@ describe("DB Routines", () => {
     });
   });
 
-  describe("getPublicRoutinesByActivity", () => {
+  xdescribe("getPublicRoutinesByActivity", () => {
     it("should include the public routine containing a specific activityId", async () => {
       const routines = await getPublicRoutinesByActivity(fakeActivity);
       expectRoutinesToContainRoutineWithActivity(
@@ -452,7 +452,7 @@ describe("DB Routines", () => {
     });
   });
 
-  xdescribe("destroyRoutine", () => {
+  describe("destroyRoutine", () => {
     it("removes routine from database", async () => {
       const fakeRoutine = await createFakePublicRoutine();
       await destroyRoutine(fakeRoutine.id);
