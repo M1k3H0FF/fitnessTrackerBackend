@@ -1,6 +1,7 @@
 /* eslint-disable */
 
-const { attachActivitiesToRoutines } = require("./activities");
+const { attachActivitiesToRoutines, getActivityById } = require("./activities");
+const { getUserByUsername } = require("./users");
 const client = require("./client");
 
 
@@ -53,37 +54,67 @@ async function getAllRoutines() {
   JOIN users ON routines."creatorId" = users.id
 `)
 return attachActivitiesToRoutines(rows);
-console.log(rows, "here's line 50")
 
 
 }
 
 async function getAllPublicRoutines() {
   const { rows } = await client.query(`
-  SELECT * 
+  SELECT routines.*, users.username AS "creatorName"
   FROM routines
-  WHERE "isPublic";
+  JOIN users ON routines."creatorId" = users.id
+  WHERE "isPublic"
 `)
-return rows;
+return attachActivitiesToRoutines(rows);
 }
 
 async function getAllRoutinesByUser({ username }) {  
   try {
-    const { rows: [ routine ] } = await client.query(`
-      SELECT id
-      FROM routines
-      WHERE "creatorId"= "userId";
-    `);
-
-    return routine;
+    const user = await getUserByUsername(username)
+    const { rows: routine } = await client.query(`
+    SELECT routines.*, users.username AS "creatorName"
+    FROM routines
+    JOIN users ON routines."creatorId" = users.id
+    WHERE "creatorId" = $1
+    `, [user.id]);
+    return attachActivitiesToRoutines(routine);
   } catch (error) {
     throw error;
   }
 }
 
-async function getPublicRoutinesByUser({ username }) {}
+async function getPublicRoutinesByUser({ username }) {
+  try {
+    const user = await getUserByUsername(username)
+    const { rows: routine } = await client.query(`
+    SELECT routines.*, users.username AS "creatorName"
+    FROM routines
+    JOIN users ON routines."creatorId" = users.id
+    WHERE "creatorId" = $1 AND "isPublic"
+    `, [user.id]);
+    return attachActivitiesToRoutines(routine);
+  } catch (error) {
+    throw error;
+  }
+}
 
-async function getPublicRoutinesByActivity({ id }) {}
+async function getPublicRoutinesByActivity({ id }) {
+  try {
+    const name = await getActivityById(id)
+    const { rows: routine } = await client.query(`
+    SELECT "routineId"
+    FROM routine_activities
+    JOIN routines ON routine_activities."routineId" = routines.id
+    WHERE "activityId" = $1
+    `,[name.id]);
+    console.log(id, 'line109')
+    console.log(routine, 'line 110')
+    return attachActivitiesToRoutines(routine);
+  } catch (error) {
+    throw error;
+  }
+
+}
 
 async function updateRoutine({ id, ...fields }) {}
 

@@ -187,7 +187,7 @@ describe("DB Routines", () => {
     });
   });
 
- xdescribe("getAllPublicRoutines", () => {
+ describe("getAllPublicRoutines", () => {
     it("should include the public routine", async () => {
       const routines = await getAllPublicRoutines();
       expectRoutinesToContainRoutine(routines, fakeRoutine);
@@ -237,7 +237,7 @@ describe("DB Routines", () => {
     });
   });
 
-  xdescribe("getAllRoutinesByUser", () => {
+  describe("getAllRoutinesByUser", () => {
     it("should get the public routine for the user", async () => {
       const routines = await getAllRoutinesByUser(fakeUser);
       expectRoutinesToContainRoutine(routines, fakeRoutine);
@@ -293,7 +293,7 @@ describe("DB Routines", () => {
     });
   });
 
-  xdescribe("getPublicRoutinesByUser", () => {
+  describe("getPublicRoutinesByUser", () => {
     it("should include the public routine", async () => {
       const routines = await getPublicRoutinesByUser(fakeUser);
       expectRoutinesToContainRoutine(routines, fakeRoutine);
@@ -344,7 +344,7 @@ describe("DB Routines", () => {
     });
   });
 
-  xdescribe("getPublicRoutinesByActivity", () => {
+  describe("getPublicRoutinesByActivity", () => {
     it("should include the public routine containing a specific activityId", async () => {
       const routines = await getPublicRoutinesByActivity(fakeActivity);
       expectRoutinesToContainRoutineWithActivity(

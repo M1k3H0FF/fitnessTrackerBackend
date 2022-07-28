@@ -74,7 +74,7 @@ async function getUserByUsername(username) {
       FROM users
       WHERE username=$1;
     `, [username]);
-
+    
     return user;
   } catch (error) {
     throw error;
