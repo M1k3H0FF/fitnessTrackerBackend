@@ -23,13 +23,71 @@ async function addActivityToRoutine({
 }
 
 
-async function getRoutineActivityById(id) {}
+async function getRoutineActivityById(id) {
+  try {
+    const { rows: [ routine ] } = await client.query(`
+      SELECT id
+      FROM routine_activities
+      WHERE id=$1;
+    `, [id]);
 
-async function getRoutineActivitiesByRoutine({ id }) {}
+    return routine;
+  } catch (error) {
+    throw error;
+  }
+}
 
-async function updateRoutineActivity({ id, ...fields }) {}
+async function getRoutineActivitiesByRoutine({ id }) {
+  try {
+    const { rows: routine } = await client.query(`
+    SELECT *
+    FROM routine_activities
+    WHERE "routineId" = $1;
+    
+  `, [ id ])
+  return routine;
+  } catch (error) {
+    throw error;
+  }
+}
 
-async function destroyRoutineActivity(id) {}
+async function updateRoutineActivity({ id, ...fields }) {
+  const setString = Object.keys(fields).map(
+    (key, index) => `"${ key }"=$${ index + 1 }`
+  ).join(', ');
+      console.log(setString, 'Here is the setString')
+  // // return early if this is called without fields
+  if (setString.length === 0) {
+    return;
+  }
+
+  try {
+    const { rows: [routine]} = await client.query(`
+      UPDATE routine_activities
+      SET ${ setString }
+      WHERE id=${ id }
+      RETURNING *;
+    `, Object.values(fields));
+
+    return routine;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function destroyRoutineActivity(id) {
+  
+  try{
+    const { rows: [routine]} = await client.query(`
+    DELETE FROM routine_activities
+    WHERE id = $1
+    RETURNING *;
+    `, [id]);
+    return routine;
+} catch (error) {
+  throw error;
+}
+}
 
 async function canEditRoutineActivity(routineActivityId, userId) {}
 

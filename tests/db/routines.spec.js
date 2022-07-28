@@ -84,7 +84,7 @@ function expectRoutinesNotToContainDuplicates(routines, fakeRoutine) {
 
 // Tests start here
 
-describe("DB Routines", () => {
+xdescribe("DB Routines", () => {
   let fakeUser,
     fakeRoutine,
     fakePrivateRoutine,
@@ -116,7 +116,7 @@ describe("DB Routines", () => {
   /****Before writing the functions for these tests, go to routine_activities.js
      and write the addActivityToRoutine function.****/
 
-  describe("createRoutine", () => {
+xdescribe("createRoutine", () => {
     it("Creates and returns the new routine", async () => {
       const user = await createFakeUser();
       const routine = await createRoutine({
@@ -137,7 +137,7 @@ describe("DB Routines", () => {
     });
   });
 
-  describe("getAllRoutines", () => {
+  xdescribe("getAllRoutines", () => {
     it("should include the public routine", async () => {
       const routines = await getAllRoutines();
       expectRoutinesToContainRoutine(routines, fakeRoutine);
@@ -187,7 +187,7 @@ describe("DB Routines", () => {
     });
   });
 
- describe("getAllPublicRoutines", () => {
+ xdescribe("getAllPublicRoutines", () => {
     it("should include the public routine", async () => {
       const routines = await getAllPublicRoutines();
       expectRoutinesToContainRoutine(routines, fakeRoutine);
@@ -237,7 +237,7 @@ describe("DB Routines", () => {
     });
   });
 
-  describe("getAllRoutinesByUser", () => {
+  xdescribe("getAllRoutinesByUser", () => {
     it("should get the public routine for the user", async () => {
       const routines = await getAllRoutinesByUser(fakeUser);
       expectRoutinesToContainRoutine(routines, fakeRoutine);
@@ -293,7 +293,7 @@ describe("DB Routines", () => {
     });
   });
 
-  describe("getPublicRoutinesByUser", () => {
+  xdescribe("getPublicRoutinesByUser", () => {
     it("should include the public routine", async () => {
       const routines = await getPublicRoutinesByUser(fakeUser);
       expectRoutinesToContainRoutine(routines, fakeRoutine);
@@ -452,7 +452,7 @@ describe("DB Routines", () => {
     });
   });
 
-  describe("destroyRoutine", () => {
+  xdescribe("destroyRoutine", () => {
     it("removes routine from database", async () => {
       const fakeRoutine = await createFakePublicRoutine();
       await destroyRoutine(fakeRoutine.id);
