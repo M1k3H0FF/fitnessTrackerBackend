@@ -141,19 +141,21 @@ async function updateRoutine({ id, ...fields }) {
 
 async function destroyRoutine(id) {
   try{
-    const { rows: [routine]} = await client.query(`
-    DELETE routines.*, users.username AS "creatorName"
-    FROM routines
-    JOIN users ON routines."creatorId" = users.id
-    JOIN routine_activities ON routine_activities."routineId" = routines.id
-    WHERE routine_activities."activityId" = $1;
-`, [id]);
-return routine
+    await client.query(`
+    DELETE FROM routine_activities
+    WHERE "routineId" = $1;
+    `, [id])
 
+    const { rows: [routine]} = await client.query(`
+    DELETE FROM routines
+    WHERE id = $1
+    RETURNING *;
+    `, [id]);
+    console.log(routine, "hello", id)
+    return routine;
   } catch (error) {
     throw error;
   }
-
 
 }
 
