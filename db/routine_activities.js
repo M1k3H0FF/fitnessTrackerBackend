@@ -89,7 +89,20 @@ async function destroyRoutineActivity(id) {
 }
 }
 
-async function canEditRoutineActivity(routineActivityId, userId) {}
+async function canEditRoutineActivity(routineActivityId, userId) {
+  try {
+    const user = await getUserByUsername(username)
+    const { rows: routine } = await client.query(`
+    SELECT routines.*, users.username AS "creatorName"
+    FROM routines
+    JOIN users ON routines."creatorId" = users.id
+    WHERE "creatorId" = $1 AND "isPublic"
+    `, [user.id]);
+    return attachActivitiesToRoutines(routine);
+  } catch (error) {
+    throw error;
+  }
+}
 
 module.exports = {
   getRoutineActivityById,

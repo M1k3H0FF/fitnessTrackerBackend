@@ -1,8 +1,15 @@
 const express = require('express');
 const router = express.Router();
 
+
+
 // GET /api/health
 router.get('/health', async (req, res, next) => {
+     
+    console.log('All is well')
+    res.send({ message: "success" });
+
+    next()
 });
 
 // ROUTER: /api/users
@@ -19,6 +26,7 @@ router.use('/routines', routinesRouter);
 
 // ROUTER: /api/routine_activities
 const routineActivitiesRouter = require('./routineActivities');
+const { app } = require('faker/lib/locales/en');
 router.use('/routine_activities', routineActivitiesRouter);
 
 module.exports = router;
