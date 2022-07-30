@@ -7,10 +7,7 @@ app.use(morgan('dev'));
 app.use(cors())
 app.use(express.json())
 // Setup your Middleware and API Router here
-app.use((req, res, next) => {
-console.log('I am a request')
-next()
-})
+
 
 app.use('/api', require('./api'))
 

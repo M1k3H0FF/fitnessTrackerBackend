@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-catch */
 const express = require("express");
 const router = express.Router();
-const {getUserByUsername, createUser} = require('../db');
+const {getUserByUsername, createUser, getAllRoutinesByUser, getAllPublicRoutines, getPublicRoutinesByUser} = require('../db');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env;
 // POST /api/users/register
@@ -93,7 +93,35 @@ router.post('/login', async (req, res, next) => {
     });
 
 // GET /api/users/me
-
+router.get('/me', async (req, res, next)=>{
+    try{
+    if(req.user){
+        res.send(req.user)
+    }else {
+        res
+        .status(401)
+        .send({
+            error: "401 - Unautherized",
+            message: 'You must be logged in to perform this action',
+            name: 'Unautherized'
+        })
+    }
+    } catch(error) {
+        next(error)
+    }
+});
 // GET /api/users/:username/routines
-
+router.get('/:username/routines', async (req, res, next)=> {
+    try {
+        if (req.user.username === req.params.username) {
+            const routines = await getAllRoutinesByUser({username: req.params.username})
+            res.send(routines)
+        } else { 
+            const publicRoutines = await getPublicRoutinesByUser({username: req.params.username})
+            res.send(publicRoutines)            
+        }
+    } catch (error) {
+        next(error)
+    }
+})
 module.exports = router;
