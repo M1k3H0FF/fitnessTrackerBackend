@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getAllActivities, getPublicRoutinesByActivity, createActivity, getActivityById } = require('../db');
+const {getActivityByName, getAllActivities, getPublicRoutinesByActivity, createActivity, getActivityById } = require('../db');
 const { ActivityNotFoundError } = require('../errors');
 
 // GET /api/activities/:activityId/routines
@@ -40,19 +40,21 @@ router.get('/', async (req, res, next)=>{
 
 // POST /api/activities
 router.post('/', async (req, res, next) =>{
-    
-    if(!req.user) {
-        next({
-            name: 'MissingUserError',
-            message: 'You must be logged in to perform this action'
-        });
+    const { name, description } = req.body;
+    const activity = await getActivityByName(name);
+    const activityData = {name: name, description:description};
+    const newActivity = await createActivity(activityData);
+    if(!activity){
+        res.send(newActivity)
     }
 
-    const { name, description } = req.body;
-    const activityData = {name: name, description:description}
-
-    const newActivity = await createActivity(activityData)
-    res.send(newActivity)
+    if(activity) {
+        next({
+            error: 'Activity Already Exists',
+            name: 'MissingUserError',
+            message: `An activity with name Push Ups already exists`,
+        });
+    }
 });
 
 // PATCH /api/activities/:activityId
@@ -67,6 +69,14 @@ router.patch('/:activityId', async (req, res, next)=>{
                 error: 'ActivityNotFoundError',
                 message: `Activity ${ activityId } not found`,
                 name: 'ActivityNotFoundError'
+            });
+        }
+
+        if(activity) {
+            next({
+                error: 'Activity Already Exists',
+                name: 'MissingUserError',
+                message: `An activity with name Push Ups already exists`,
             });
         }
     } catch (error) {

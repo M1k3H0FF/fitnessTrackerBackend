@@ -12,7 +12,7 @@ router.post('/register', async (req, res, next) => {
     console.log(username, 'line9')
     try {
         const _user = await getUserByUsername(username)
-
+    
         if (_user) {
             next({
               name: 'UserExistsError',
