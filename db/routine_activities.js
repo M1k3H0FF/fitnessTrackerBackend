@@ -26,7 +26,7 @@ async function addActivityToRoutine({
 async function getRoutineActivityById(id) {
   try {
     const { rows: [ routine ] } = await client.query(`
-      SELECT id
+      SELECT *
       FROM routine_activities
       WHERE id=$1;
     `, [id]);
@@ -91,14 +91,14 @@ async function destroyRoutineActivity(id) {
 
 async function canEditRoutineActivity(routineActivityId, userId) {
   try {
-    const user = await getUserByUsername(username)
-    const { rows: routine } = await client.query(`
-    SELECT routines.*, users.username AS "creatorName"
-    FROM routines
-    JOIN users ON routines."creatorId" = users.id
-    WHERE "creatorId" = $1 AND "isPublic"
-    `, [user.id]);
-    return attachActivitiesToRoutines(routine);
+  
+    const { rows: [routine] } = await client.query(`
+    SELECT routine_activities.*, routines."creatorId"
+    FROM routine_activities
+    JOIN routines ON routine_activities."routineId" = routines.id
+    WHERE routine_activities.id = $1 AND routines."creatorId" = $2;
+    `, [routineActivityId, userId]);
+    return routine;
   } catch (error) {
     throw error;
   }
