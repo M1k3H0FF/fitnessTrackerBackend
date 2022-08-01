@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getActivityByName, getAllActivities, getPublicRoutinesByActivity, createActivity, getActivityById } = require('../db');
+const {getActivityByName, getAllActivities, updateActivity, getPublicRoutinesByActivity, createActivity, getActivityById } = require('../db');
 const { ActivityNotFoundError } = require('../errors');
 
 // GET /api/activities/:activityId/routines
@@ -58,30 +58,35 @@ router.post('/', async (req, res, next) =>{
 });
 
 // PATCH /api/activities/:activityId
-router.patch('/:activityId', async (req, res, next)=>{
-    const { activityId } = req.params;
-    const obj = {id: activityId}
 
-    const activity = await getActivityById(activityId)
-    try {
-        if (!activity){
-            res.send({
-                error: 'ActivityNotFoundError',
-                message: `Activity ${ activityId } not found`,
-                name: 'ActivityNotFoundError'
-            });
-        }
-
-        if(activity) {
-            next({
-                error: 'Activity Already Exists',
-                name: 'MissingUserError',
-                message: `An activity with name Push Ups already exists`,
-            });
-        }
-    } catch (error) {
-        next(error)
+router.patch('/:activityId', async (req, res, next) => {
+  const { activityId } = req.params;
+  const { name, description } = req.body;
+  const activityFields = {id:activityId, name:name, description:description}
+  const activity = await getActivityById(activityId);
+  try {
+    if (!activity) {
+      next({
+        error: 'ActivityNotFoundError',
+        message: `Activity ${activityId} not found`,
+        name: 'ActivityNotFoundError',
+      });
     }
+    const activityNameCheck = await getActivityByName(name)
+    if (activityNameCheck) {
+      next({
+        name: 'Activity Exists',
+        error: 'Extant Activity',
+        message: `An activity with name ${name} already exists`,
+      })
+    }
+    const updatedActivity = await updateActivity(activityFields);
+    res.send(updatedActivity)
+  } catch (error) {
+    next(error);
+  }
 });
+
+
 
 module.exports = router;
