@@ -45,15 +45,5 @@ router.use('/routines', routinesRouter);
 const routineActivitiesRouter = require('./routineActivities');
 // const { app } = require(‘faker/lib/locales/en’);
 router.use('/routine_activities', routineActivitiesRouter);
-router.use((error, req, res, next) => {
-  let errorStatus = 400
-  if (error.status) {
-    errorStatus = error.status
-  }
-  res.status(errorStatus).send({
-    error: error.error,
-    name: error.name,
-    message: error.message
-  });
-});
+
 module.exports = router;

@@ -54,8 +54,8 @@ router.patch('/:routineId', requireUser, async (req, res, next) => {
       const updatedRoutine = await updateRoutine(updateFields);
       res.send( updatedRoutine );
     } else {
+      res.status(403)
       next({
-        status: 403,
         name: '403Error',
         error: 'An Error Occured',
         message: `User ${req.user.username} is not allowed to update ${originalRoutine.name}`,
@@ -74,8 +74,8 @@ router.delete("/:routineId", requireUser, async (req, res, next) => {
       await destroyRoutine(routineId);
       res.send(routine);
     } else {
+      res.status(403)
       next({
-        status: 403,
         name: '403Error',
         error: 'An Error Occured',
         message: `User ${req.user.username} is not allowed to delete ${routine.name}`,
@@ -101,21 +101,23 @@ router.post('/:routineID/activities', async (req, res, next) =>{
   if (duration) {
     ActivityToAdd.duration = duration;
   }
-  // const routineObject = await getRoutineById(routineId);
-  // console.log(routineObject, “avacado”)
-  // const oldRoutineAct = await getRoutineActivitiesByRoutine(routineObject)
-  // console.log(oldRoutineAct, “banana”)
-  // console.log(ActivityToAdd, “line 122")
+  
+  const oldRoutineActArr = await getRoutineActivitiesByRoutine({id:routineId})
+  const alreadyThere = oldRoutineActArr.filter((record)=>{
+    return record.activityId == activityId
+  })
+
   try{
-    // if (ActivityToAdd.activityId === oldRoutineAct.activityId){
-    //   res.send({
-    //     error: “Activity Duplication Error”,
-    //     message: `Activity ID ${activityId} already exists in Routine ID ${routineId}`
-    //   });
-    // } else {
+    if (alreadyThere.length){
+      res.send({
+        error: "Activity Duplication Error",
+        message: `Activity ID ${activityId} already exists in Routine ID ${routineId}`,
+        name: "Bad workout plan"
+      });
+    } else {
       const routinePlusOne = await addActivityToRoutine(ActivityToAdd)
       res.send(routinePlusOne)
-    // }
+     }
   } catch(error){
     next(error)
   }

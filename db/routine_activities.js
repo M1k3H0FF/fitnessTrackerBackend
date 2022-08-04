@@ -93,12 +93,12 @@ async function canEditRoutineActivity(routineActivityId, userId) {
   try {
   
     const { rows: [routine] } = await client.query(`
-    SELECT routine_activities.*, routines."creatorId"
+    SELECT *
     FROM routine_activities
-    JOIN routines ON routine_activities."routineId" = routines.id
-    WHERE routine_activities.id = $1 AND routines."creatorId" = $2;
-    `, [routineActivityId, userId]);
-    return routine;
+    JOIN routines ON routine_activities."routineId" = routines.id 
+    AND routine_activities.id = $1;
+    `, [routineActivityId]);
+    return routine.creatorId == userId;
   } catch (error) {
     throw error;
   }
